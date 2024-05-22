@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web聊天</title>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+    margin-bottom: 100px; /* 留出输入框容器的高度 */
+}
+
+#message-input-container {
+    height: 80px; /* 设置输入框容器的高度 */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+#messageInput {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+#sendButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.message-username {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.message-text {
+    white-space: pre-wrap;
+}
+
+#messageArea pre {
+    white-space: pre-wrap;
+}
+
+#status {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 14px;
+    color: #333;
+}
+#server-selector {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    font-size: 14px;
+    color: #333;
+}
+</style>
+</head>
+<body>
+<h1>Web聊天室</h1>
+<div id="chat-container">
+    <div id="messageArea"></div>
+</div>
+<div id="message-input-container">
+    <input type="text" id="messageInput" placeholder="在这里发送消息…">
+    <button id="sendButton" onclick="sendMessage()">发送</button>
+</div>
+<div id="status"></div>
+<div id="server-selector">
+    <select id="serverSelect" onchange="changeServer()">
+        <option value="lobby">主大厅聊天通道</option>
+        <option value="sv">生存服聊天通道</option>
+    </select>
+</div>
+<script>
+    var socket;
+
+    function connectToServer(url) {
+        if (socket) {
+            socket.close();
+        }
+        socket = new WebSocket(url);
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened:", event);
+            document.getElementById('status').innerText = '服务器在线，UI:ZUY Studio';
+            LoginJson('lobby');
+        };
+        socket.onmessage = function(event) {
+            displayMessage('<span class="message-username">|</span> <span class="message-text">' + event.data + '</span>');
+        };
+        socket.onclose = function(event) {
+            console.log('WebSocket connection closed:', event);
+            document.getElementById('status').innerText = '服务器离线，请稍后再试';
+        };
+        socket.onerror = function(error) {
+            console.error('WebSocket Error:', error);
+            document.getElementById('status').innerHTML = '连接错误';
+        };
+    }
+
+    function sendMessage() {
+        var input = document.getElementById('messageInput');
+        var message = input.value;
+        if (socket.readyState === WebSocket.OPEN && message.trim() !== '') {
+            socket.send("{\"user\": \"{{ user }}\", \"msg\": \"" + message + "\"}");
+            input.value = '';
+        } else {
+            console.error('WebSocket is not open or message is empty.');
+        }
+    }
+
+    function displayMessage(message) {
+        var messageArea = document.getElementById('messageArea');
+        var messageElement = document.createElement('div');
+        messageElement.className = 'message';
+        messageElement.innerHTML = message;
+        messageArea.appendChild(messageElement);
+
+        setTimeout(function() {
+            messageElement.classList.add('show');
+        }, 100);
+
+        // 滚动到消息区域的底部
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    function changeServer() {
+        var serverSelect = document.getElementById('serverSelect');
+        var selectedServer = serverSelect.value;
+        LoginJson(selectedServer);
+    }
+    function LoginJson(server) {
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send("{\"login_user\": \"{{ user }}\", \"is_anonymous\": \"false\", \"server\": \"" + server + "\"}");
+        } else {
+            console.error('WebSocket is not open or message is empty.');
+        }
+    }
+
+    document.getElementById('messageInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            event.preventDefault(); // 阻止默认的表单提交行为（如果有的话）
+            sendMessage(); // 调用发送消息的函数
+        }
+    });
+
+    // 初始化连接到第一个服务器
+    connectToServer('ws://eternalstarmc.com:8090');
+</script>
+</body>
+</html>

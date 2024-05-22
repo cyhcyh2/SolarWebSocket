@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进入聊天室</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f8f8;
+            color: #202124;
+        }
+
+        .chat-container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            padding: 20px;
+            width: 300px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #5f6368;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 5px;
+            border: 1px solid #dadce0;
+            border-radius: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            background-color: #4285f4;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.4s;
+        }
+
+        button:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <h1>进入无用的聊天室（？）</h1>
+    <label for="chatRoomInput">你的昵称：</label>
+    <input type="text" id="chatRoomInput" name="chatRoomInput">
+    <button onclick="redirectToChat()">点击进入！</button>
+</div>
+
+<script>
+    function redirectToChat() {
+        var inputValue = document.getElementById('chatRoomInput').value;
+        var encodedInputValue = encodeURIComponent(inputValue);
+        var newUrl = '/chat/' + encodedInputValue;
+        window.location.href = newUrl;
+    }
+</script>
+
+</body>
+</html>

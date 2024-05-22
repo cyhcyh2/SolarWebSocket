@@ -1,0 +1,4 @@
+name: SolarWebSocket
+version: '${project.version}'
+main: me.cyh2.bungee.solarwebsocket.SolarWebSocketBungee
+author: "cyh2 - CYson Hab, SolarMC"

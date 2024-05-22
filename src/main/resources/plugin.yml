@@ -1,0 +1,8 @@
+name: SolarWebSocket
+version: '${project.version}'
+main: me.cyh2.solarwebsocket.SolarWebSocket
+api-version: '1.19'
+commands:
+  webchat:
+    description: "发送网络聊天信息"
+    aliases: [ "wchat", "wc" ]
