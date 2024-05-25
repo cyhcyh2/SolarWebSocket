@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.util.logging.Logger;
 
 import static me.cyh2.bungee.solarwebsocket.utils.textutils.ColorUtils.ReColor;
+import static me.cyh2.bungee.solarwebsocket.utils.textutils.getServers.Servers;
 import static me.cyh2.html.HtmlReader.LoadHtmlFile;
 
 public final class SolarWebSocketBungee extends Plugin {
@@ -29,6 +30,7 @@ public final class SolarWebSocketBungee extends Plugin {
     public static Configuration config;
     public static StringBuilder index_html;
     public static StringBuilder chat_html;
+    public static String ServerSelect;
     public static MainWebSocket WSServer;
     public static NettyHttpServer nettyHttpServer;
     @Override
@@ -40,6 +42,7 @@ public final class SolarWebSocketBungee extends Plugin {
         saveResource("config.yml", false);
         saveResource("index.html", false);
         saveResource("chat.html", false);
+        ServerSelect = Servers(proxyServer);
         msgConfig = loadConfig("message.yml");
         config = loadConfig("config.yml");
         index_html = LoadHtmlFile(getDataFolder() + "/index.html");

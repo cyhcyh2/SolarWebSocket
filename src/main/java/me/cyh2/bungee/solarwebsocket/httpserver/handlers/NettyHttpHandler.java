@@ -8,8 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.util.CharsetUtil;
 
-import static me.cyh2.bungee.solarwebsocket.SolarWebSocketBungee.chat_html;
-import static me.cyh2.bungee.solarwebsocket.SolarWebSocketBungee.index_html;
+import static me.cyh2.bungee.solarwebsocket.SolarWebSocketBungee.*;
 
 
 /**
@@ -38,7 +37,7 @@ public class NettyHttpHandler extends SimpleChannelInboundHandler<FullHttpReques
                 StringBuilder sb = new StringBuilder();
                 if (result.startsWith("/chat/")) {
                     String user_name = result.substring(6);
-                    sb.append(chat_html.toString().replace("{{ user }}", user_name));
+                    sb.append(chat_html.toString().replace("{{ user }}", user_name).replace("{{ servers }}", ServerSelect));
                 } else if (result.length() <= 1) {
                     sb.append(index_html);
                 } else {

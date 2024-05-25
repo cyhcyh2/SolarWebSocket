@@ -115,8 +115,7 @@ h1 {
 <div id="status"></div>
 <div id="server-selector">
     <select id="serverSelect" onchange="changeServer()">
-        <option value="lobby">主大厅聊天通道</option>
-        <option value="sv">生存服聊天通道</option>
+        {{ servers }}
     </select>
 </div>
 <script>
